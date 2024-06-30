@@ -1,7 +1,13 @@
-﻿using mACRON.Models;
+﻿using mACRON.Controllers;
+using mACRON.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebSocketSharp;
 
@@ -13,6 +19,11 @@ namespace mACRON
         private WebSocket ws;
         private List<Chat> chats;
         private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
+        private JWT jwtAutch = new JWT();
+        //private ChatService _chatService;
+
+        private readonly ChatService _chatService;
+        private readonly HttpClient _httpClient;
 
         public Form2(Form1 form1)
         {
@@ -22,22 +33,13 @@ namespace mACRON
 
             this.FormClosing += Form2_FormClosing;
             this.form1 = form1;
+
+            _httpClient = new HttpClient();
+            _chatService = new ChatService(_httpClient);
         }
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            ws = new WebSocket("ws://localhost:8080/ws");
-
-            ws.OnMessage += (s, ev) =>
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    // Отображаем полученное сообщение на панели
-                    AddMessageToPanel("Other", ev.Data, DateTime.Now);
-                });
-            };
-
-            ws.Connect();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -321,16 +323,43 @@ namespace mACRON
             form1.Close();
         }
 
-        // Поиск чататов
-        private void button2_Click(object sender, EventArgs e)
+        private void SetAuthorizationHeader()
         {
-
+            string token = jwtAutch.GetJwtFromConfig();
+            _chatService.SetAuthorizationHeader(token);
         }
 
-        // Отправить сообщение
-        private void button1_Click_1(object sender, EventArgs e)
+        // Поиск чататов
+        private async void button2_Click(object sender, EventArgs e)
         {
+            SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
 
+            string chatName = "roma";
+            List<string> participants = new List<string>
+            {
+                "pizda"
+            };
+
+            HttpResponseMessage response = await _chatService.CreateChat(chatName, participants);
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            MessageBox.Show(response.IsSuccessStatusCode ? "Chat created successfully" : "Error creating chat: " + responseBody);
+        }
+
+        // Отправить сообщение, ПОЛУЧИТЬ ЧАТЫ
+        private async void button1_Click_1(object sender, EventArgs e)
+        {
+            SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
+
+            try
+            {
+                string result = await _chatService.GetChats();
+                MessageBox.Show(result, "Chats Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error getting chats: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
