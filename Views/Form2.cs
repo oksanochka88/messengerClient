@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Net.Http;
 using System.Windows.Forms;
 using WebSocketSharp;
-using System.IO;
 
 namespace mACRON
 {
@@ -49,7 +49,7 @@ namespace mACRON
                     ws.Send(textBox1.Text);
 
                     // Отображаем отправленное сообщение на панели
-                    AddMessageToPanel("Me", textBox1.Text, DateTime.Now);
+                    //AddMessageToPanel("Me", textBox1.Text, DateTime.Now);
                 }
                 catch (Exception ex)
                 {
@@ -67,19 +67,38 @@ namespace mACRON
 
         private void AddMessageToPanel(string sender, string content, DateTime timestamp)
         {
-            Label messageLabel = new Label
+            try
             {
-                Text = $"{timestamp:G} {sender}: {content}",
-                AutoSize = true,
-                MaximumSize = new Size(panel2.Width - 20, 0),
-                Padding = new Padding(10),
-                Margin = new Padding(5),
-                BackColor = sender == "Me" ? Color.LightBlue : Color.LightGray,
-                TextAlign = ContentAlignment.MiddleLeft
-            };
+                if (sender == null)
+                {
+                    throw new ArgumentNullException(nameof(sender), "Sender is null");
+                }
 
-            panel2.Controls.Add(messageLabel);
-            panel2.ScrollControlIntoView(messageLabel);
+                if (content == null)
+                {
+                    throw new ArgumentNullException(nameof(content), "Content is null");
+                }
+
+                Label messageLabel = new Label
+                {
+                    Text = $"{timestamp:G} {sender}: {content}",
+                    AutoSize = true,
+                    MaximumSize = new Size(panel1.Width - 20, 0),
+                    Padding = new Padding(10),
+                    Margin = new Padding(5),
+                    BackColor = sender == "Me" ? Color.LightBlue : Color.LightGray,
+                    TextAlign = ContentAlignment.MiddleLeft
+                };
+
+                // Добавляем сообщение в начало панели
+                panel1.Controls.Add(messageLabel); // Добавляем в конец
+                panel1.Controls.SetChildIndex(messageLabel, 0); // Помещаем в начало
+                //panel1.ScrollControlIntoView(messageLabel); // Прокручиваем к добавленному сообщению
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error adding message to panel: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void InitializeTestData()
@@ -310,7 +329,7 @@ namespace mACRON
             {
                 foreach (var message in messages)
                 {
-                    AddMessageToPanel(message.Sender, message.Content, message.Timestamp);
+                    //AddMessageToPanel(message.Sender, message.Content, message.Timestamp);
                 }
             }
         }
@@ -418,14 +437,25 @@ namespace mACRON
                     string json = await response.Content.ReadAsStringAsync();
 
                     // Сохранение JSON в файл
-                    SaveJsonToFile(json, "chatMessages.json");
+                    //SaveJsonToFile(json, "chatMessages.json");
 
-                    var messages = JsonConvert.DeserializeObject<List<Message>>(json);
-
-                    panel1.Controls.Clear();
-                    foreach (var message in messages)
+                    try
                     {
-                        AddMessageToPanel(message.UserId.ToString(), message.Content, message.CreatedAt);
+                        var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
+
+                        panel1.Controls.Clear();
+                        
+                        foreach (var message in messagesResponse.Messages)
+                        {
+                            MessageBox.Show(message.Content);
+
+                            //AddMessageToPanel(1.ToString(), message.Content, message.CreatedAt);
+         
+                        }
+                    }
+                    catch (Exception deserializationException)
+                    {
+                        MessageBox.Show($"Ошибка десериализации: {deserializationException.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -450,16 +480,19 @@ namespace mACRON
                 MessageBox.Show($"Произошла ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
     }
 
-    public class Message
+    public class Message1
     {
         public int Id { get; set; }
         public int ChatId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
+    }
+
+    public class MessagesResponse
+    {
+        public List<Message1> Messages { get; set; }
     }
 }
