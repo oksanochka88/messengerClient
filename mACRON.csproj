@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ChatService.cs" />
     <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Controllers\JWT.cs" />
     <Compile Include="Controllers\LoginUser.cs" />

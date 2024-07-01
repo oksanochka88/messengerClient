@@ -5,11 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebSocketSharp;
+using System.IO;
 
 namespace mACRON
 {
@@ -20,7 +18,6 @@ namespace mACRON
         private List<Chat> chats;
         private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
         private JWT jwtAutch = new JWT();
-        //private ChatService _chatService;
 
         private readonly ChatService _chatService;
         private readonly HttpClient _httpClient;
@@ -74,15 +71,15 @@ namespace mACRON
             {
                 Text = $"{timestamp:G} {sender}: {content}",
                 AutoSize = true,
-                MaximumSize = new Size(panel1.Width - 20, 0),
+                MaximumSize = new Size(panel2.Width - 20, 0),
                 Padding = new Padding(10),
                 Margin = new Padding(5),
                 BackColor = sender == "Me" ? Color.LightBlue : Color.LightGray,
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
-            panel1.Controls.Add(messageLabel);
-            panel1.ScrollControlIntoView(messageLabel);
+            panel2.Controls.Add(messageLabel);
+            panel2.ScrollControlIntoView(messageLabel);
         }
 
         private void InitializeTestData()
@@ -337,7 +334,7 @@ namespace mACRON
             string chatName = "roma";
             List<string> participants = new List<string>
             {
-                "pizda"
+                "pizda7897"
             };
 
             HttpResponseMessage response = await _chatService.CreateChat(chatName, participants);
@@ -349,6 +346,7 @@ namespace mACRON
         // Отправить сообщение, ПОЛУЧИТЬ ЧАТЫ
         private async void button1_Click_1(object sender, EventArgs e)
         {
+            /*
             SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
 
             try
@@ -359,6 +357,34 @@ namespace mACRON
             catch (Exception ex)
             {
                 MessageBox.Show("Error getting chats: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            */
+
+
+            try
+            {
+                SetAuthorizationHeader();
+
+                int chatId = 6; // Укажите идентификатор чата, куда нужно отправить сообщение
+                string content = textBox1.Text; // Предположим, у вас есть текстовое поле для ввода сообщения
+
+                HttpResponseMessage response = await _chatService.SendMessage(chatId, content);
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Message sent successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    textBox1.Clear();
+                    LoadChatMessages(chatId.ToString()); // Обновляем сообщения в чате
+                }
+                else
+                {
+                    MessageBox.Show("Error sending message: " + responseBody, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при отправке сообщения: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -372,5 +398,68 @@ namespace mACRON
         {
 
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void button8_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
+
+                int chatId = 6; // Пример ID чата, замените на нужный ID
+                HttpResponseMessage response = await _chatService.GetMessages(chatId);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    // Сохранение JSON в файл
+                    SaveJsonToFile(json, "chatMessages.json");
+
+                    var messages = JsonConvert.DeserializeObject<List<Message>>(json);
+
+                    panel1.Controls.Clear();
+                    foreach (var message in messages)
+                    {
+                        AddMessageToPanel(message.UserId.ToString(), message.Content, message.CreatedAt);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Ошибка получения сообщений: {response.ReasonPhrase}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SaveJsonToFile(string json, string fileName)
+        {
+            try
+            {
+                File.WriteAllText(fileName, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+    }
+
+    public class Message
+    {
+        public int Id { get; set; }
+        public int ChatId { get; set; }
+        public int UserId { get; set; }
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

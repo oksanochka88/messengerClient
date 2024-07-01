@@ -45,6 +45,7 @@
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.button8 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -65,6 +66,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.button8);
             this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Controls.Add(this.panel2);
             this.tabPage1.Controls.Add(this.button1);
@@ -93,9 +95,9 @@
             this.panel2.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.panel2.AutoScroll = true;
             this.panel2.BackColor = System.Drawing.Color.Wheat;
-            this.panel2.Location = new System.Drawing.Point(5, 80);
+            this.panel2.Location = new System.Drawing.Point(5, 191);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(333, 604);
+            this.panel2.Size = new System.Drawing.Size(333, 493);
             this.panel2.TabIndex = 3;
             // 
             // button1
@@ -118,6 +120,7 @@
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox1.Size = new System.Drawing.Size(635, 120);
             this.textBox1.TabIndex = 1;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // panel1
             // 
@@ -225,6 +228,16 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(61, 95);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(211, 72);
+            this.button8.TabIndex = 5;
+            this.button8.Text = "button8";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -264,5 +277,6 @@
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Button button8;
     }
 }
