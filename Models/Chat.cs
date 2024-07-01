@@ -8,8 +8,13 @@ namespace mACRON.Models
 {
     public class Chat
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public int UnreadMessages { get; set; } // Новое свойство для непрочитанных сообщений
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class ChatResponse
+    {
+        public List<Chat> Chats { get; set; }
     }
 }

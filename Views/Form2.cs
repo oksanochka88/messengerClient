@@ -15,7 +15,7 @@ namespace mACRON
     {
         private Form1 form1;
         private WebSocket ws;
-        private List<Chat> chats;
+        //private List<Chat> chats;
         private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
         private JWT jwtAutch = new JWT();
 
@@ -25,14 +25,16 @@ namespace mACRON
         public Form2(Form1 form1)
         {
             InitializeComponent();
-            InitializeTestData();
-            LoadUserChats();
+            //InitializeTestData();
+            //LoadUserChats();
 
             this.FormClosing += Form2_FormClosing;
             this.form1 = form1;
 
             _httpClient = new HttpClient();
             _chatService = new ChatService(_httpClient);
+
+            LoadUserChats();
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -101,219 +103,110 @@ namespace mACRON
             }
         }
 
-        private void InitializeTestData()
-        {
-            chats = new List<Chat>
-            {
-                new Chat { Id = "1", Name = "Chat fffffffffffffff1", UnreadMessages = 3 },
-                new Chat { Id = "2", Name = "Chat ffffffffffffffff2", UnreadMessages = 0 },
-                new Chat { Id = "3", Name = "Chat 3", UnreadMessages = 1 },
-                new Chat { Id = "4", Name = "Chat fffffffffffffff1", UnreadMessages = 3 },
-                new Chat { Id = "5", Name = "Chat ffffffffffffffff2", UnreadMessages = 0 },
-                new Chat { Id = "6", Name = "Chat 3", UnreadMessages = 1 },
-                new Chat { Id = "7", Name = "Chat fffffffffffffff1", UnreadMessages = 3 },
-                new Chat { Id = "8", Name = "Chat ffffffffffffffff2", UnreadMessages = 0 },
-                new Chat { Id = "9", Name = "Chat 3", UnreadMessages = 1 },
-                new Chat { Id = "10", Name = "Chat fffffffffffffff1", UnreadMessages = 3 },
-                new Chat { Id = "11", Name = "Chat ffffffffffffffff2", UnreadMessages = 0 },
-                new Chat { Id = "12", Name = "Chat 3", UnreadMessages = 1 },
-                new Chat { Id = "13", Name = "Chat fffffffffffffff1", UnreadMessages = 3 },
-                new Chat { Id = "14", Name = "Chat ffffffffffffffff2", UnreadMessages = 0 },
-                new Chat { Id = "15", Name = "Chat 3", UnreadMessages = 1 },
-            };
 
-            chatMessages = new Dictionary<string, List<mACRON.Models.Message>>
-            {
-                {
-                    "1", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User1", Content = "Hello from Chat 1", Timestamp = DateTime.Now.AddMinutes(-10) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hi there!", Timestamp = DateTime.Now.AddMinutes(-8) }
-                    }
-                },
-                {
-                    "2", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User2", Content = "Welcome to Chat 2", Timestamp = DateTime.Now.AddMinutes(-20) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Thanks!", Timestamp = DateTime.Now.AddMinutes(-18) }
-                    }
-                },
-                {
-                    "3", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User3", Content = "Chat 3 message", Timestamp = DateTime.Now.AddMinutes(-30) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hello!", Timestamp = DateTime.Now.AddMinutes(-28) }
-                    }
-                },
-                        {
-                    "4", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User1", Content = "Hello from Chat 1", Timestamp = DateTime.Now.AddMinutes(-10) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hi there!", Timestamp = DateTime.Now.AddMinutes(-8) }
-                    }
-                },
-                {
-                    "5", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User2", Content = "Welcome to Chat 2", Timestamp = DateTime.Now.AddMinutes(-20) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Thanks!", Timestamp = DateTime.Now.AddMinutes(-18) }
-                    }
-                },
-                {
-                    "6", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User3", Content = "Chat 3 message", Timestamp = DateTime.Now.AddMinutes(-30) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hello!", Timestamp = DateTime.Now.AddMinutes(-28) }
-                    }
-                },
-                        {
-                    "7", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User1", Content = "Hello from Chat 1", Timestamp = DateTime.Now.AddMinutes(-10) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hi there!", Timestamp = DateTime.Now.AddMinutes(-8) }
-                    }
-                },
-                {
-                    "8", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User2", Content = "Welcome to Chat 2", Timestamp = DateTime.Now.AddMinutes(-20) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Thanks!", Timestamp = DateTime.Now.AddMinutes(-18) }
-                    }
-                },
-                {
-                    "9", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User3", Content = "Chat 3 message", Timestamp = DateTime.Now.AddMinutes(-30) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hello!", Timestamp = DateTime.Now.AddMinutes(-28) }
-                    }
-                },
-                        {
-                    "10", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User1", Content = "Hello from Chat 1", Timestamp = DateTime.Now.AddMinutes(-10) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hi there!", Timestamp = DateTime.Now.AddMinutes(-8) }
-                    }
-                },
-                {
-                    "11", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User2", Content = "Welcome to Chat 2", Timestamp = DateTime.Now.AddMinutes(-20) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Thanks!", Timestamp = DateTime.Now.AddMinutes(-18) }
-                    }
-                },
-                {
-                    "12", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User3", Content = "Chat 3 message", Timestamp = DateTime.Now.AddMinutes(-30) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hello!", Timestamp = DateTime.Now.AddMinutes(-28) }
-                    }
-                },
-                        {
-                    "13", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User1", Content = "Hello from Chat 1", Timestamp = DateTime.Now.AddMinutes(-10) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hi there!", Timestamp = DateTime.Now.AddMinutes(-8) }
-                    }
-                },
-                {
-                    "14", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User2", Content = "Welcome to Chat 2", Timestamp = DateTime.Now.AddMinutes(-20) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Thanks!", Timestamp = DateTime.Now.AddMinutes(-18) }
-                    }
-                },
-                {
-                    "15", new List<mACRON.Models.Message>
-                    {
-                        new mACRON.Models.Message { Sender = "User3", Content = "Chat 3 message", Timestamp = DateTime.Now.AddMinutes(-30) },
-                        new mACRON.Models.Message { Sender = "Me", Content = "Hello!", Timestamp = DateTime.Now.AddMinutes(-28) }
-                    }
-                },
-            };
-        }
-
-        private void LoadUserChats()
+        private async void LoadUserChats()
         {
             panel2.Controls.Clear();
             panel2.AutoScroll = true;
 
-            FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel
+            try
             {
-                Dock = DockStyle.Fill,
-                AutoScroll = true,
-                FlowDirection = FlowDirection.TopDown
-            };
+                SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
 
-            foreach (var chat in chats)
-            {
-                Panel chatPanel = new Panel
+                // Получаем список чатов по сети
+                string result = await _chatService.GetChats(); // Предполагается, что метод GetChats возвращает строку JSON
+                MessageBox.Show(result); // Показывает полученный JSON
+
+                // Десериализуем JSON в корневой объект ChatResponse
+                var chatResponse = JsonConvert.DeserializeObject<ChatResponse>(result);
+
+                // Получаем список чатов из корневого объекта
+                var chatsResponse = chatResponse.Chats;
+
+                FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel
                 {
-                    Height = 40,
-                    Width = panel2.Width - 20,
-                    Margin = new Padding(5),
-                    BorderStyle = BorderStyle.FixedSingle,
-                    Padding = new Padding(5)
+                    Dock = DockStyle.Fill,
+                    AutoScroll = true,
+                    FlowDirection = FlowDirection.TopDown
                 };
 
-                Label chatLabel = new Label
+                foreach (var chat in chatsResponse)
                 {
-                    Text = chat.Name,
-                    Dock = DockStyle.Left,
-                    AutoSize = true
-                };
-
-                if (chat.UnreadMessages > 0)
-                {
-                    Label unreadLabel = new Label
+                    Panel chatPanel = new Panel
                     {
-                        Text = chat.UnreadMessages.ToString(),
-                        ForeColor = Color.White,
-                        BackColor = Color.Red,
-                        AutoSize = true,
-                        Padding = new Padding(5),
+                        Height = 40,
+                        Width = panel2.Width - 20,
                         Margin = new Padding(5),
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        Dock = DockStyle.Right
+                        BorderStyle = BorderStyle.FixedSingle,
+                        Padding = new Padding(5)
                     };
-                    chatPanel.Controls.Add(unreadLabel);
+
+                    Label chatLabel = new Label
+                    {
+                        Text = chat.Name,
+                        Dock = DockStyle.Left,
+                        AutoSize = true
+                    };
+
+                    Button chatButton = new Button
+                    {
+                        Text = "",
+                        Tag = chat.Id,
+                        Height = 40,
+                        Dock = DockStyle.Fill,
+                        FlatStyle = FlatStyle.Flat
+                    };
+                    chatButton.Click += ChatButton_Click;
+                    chatPanel.Controls.Add(chatLabel);
+                    chatPanel.Controls.Add(chatButton);
+
+                    flowLayoutPanel.Controls.Add(chatPanel);
                 }
 
-                Button chatButton = new Button
-                {
-                    Text = "",
-                    Tag = chat.Id,
-                    Height = 40,
-                    Dock = DockStyle.Fill,
-                    FlatStyle = FlatStyle.Flat
-                };
-                chatButton.Click += ChatButton_Click;
-                chatPanel.Controls.Add(chatLabel);
-                chatPanel.Controls.Add(chatButton);
-
-                flowLayoutPanel.Controls.Add(chatPanel);
+                panel2.Controls.Add(flowLayoutPanel);
             }
-
-            panel2.Controls.Add(flowLayoutPanel);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при загрузке чатов: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void ChatButton_Click(object sender, EventArgs e)
+        private async void ChatButton_Click(object sender, EventArgs e)
         {
             Button chatButton = sender as Button;
 
             if (chatButton != null && chatButton.Tag != null)
             {
                 string chatId = chatButton.Tag.ToString();
-                LoadChatMessages(chatId);
 
-                // Снять индикатор непрочитанных сообщений
-                var chat = chats.Find(c => c.Id == chatId);
-                if (chat != null)
+                try
                 {
-                    chat.UnreadMessages = 0;
-                }
+                    SetAuthorizationHeader();
 
-                // Перезагрузить список чатов для обновления индикатора
-                LoadUserChats();
+                    // Получаем сообщения чата по сети
+                    HttpResponseMessage response = await _chatService.GetMessages(6);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string json = await response.Content.ReadAsStringAsync();
+                        var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
+
+                        panel1.Controls.Clear();
+
+                        foreach (var message in messagesResponse.Messages)
+                        {
+                            AddMessageToPanel(message.UserId.ToString(), message.Content, message.CreatedAt);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Ошибка получения сообщений: {response.ReasonPhrase}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Произошла ошибка при загрузке сообщений чата: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
@@ -394,6 +287,7 @@ namespace mACRON
                 {
                     MessageBox.Show("Message sent successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     textBox1.Clear();
+
                     LoadChatMessages(chatId.ToString()); // Обновляем сообщения в чате
                 }
                 else
@@ -423,6 +317,7 @@ namespace mACRON
 
         }
 
+        // Получение сообщений
         private async void button8_Click(object sender, EventArgs e)
         {
             try
@@ -444,13 +339,13 @@ namespace mACRON
                         var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
 
                         panel1.Controls.Clear();
-                        
+
                         foreach (var message in messagesResponse.Messages)
                         {
                             MessageBox.Show(message.Content);
 
                             //AddMessageToPanel(1.ToString(), message.Content, message.CreatedAt);
-         
+
                         }
                     }
                     catch (Exception deserializationException)
@@ -495,4 +390,6 @@ namespace mACRON
     {
         public List<Message1> Messages { get; set; }
     }
+
+
 }
