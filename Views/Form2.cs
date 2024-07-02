@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Windows.Forms;
 using WebSocketSharp;
@@ -15,9 +16,10 @@ namespace mACRON
     {
         private Form1 form1;
         private WebSocket ws;
-        //private List<Chat> chats;
         private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
         private JWT jwtAutch = new JWT();
+        private List<Chat> _chats = new List<Chat>();
+        private Chat _activeChat;
 
         private readonly ChatService _chatService;
         private readonly HttpClient _httpClient;
@@ -25,8 +27,6 @@ namespace mACRON
         public Form2(Form1 form1)
         {
             InitializeComponent();
-            //InitializeTestData();
-            //LoadUserChats();
 
             this.FormClosing += Form2_FormClosing;
             this.form1 = form1;
@@ -67,41 +67,44 @@ namespace mACRON
             }
         }
 
-        private void AddMessageToPanel(string sender, string content, DateTime timestamp)
+        private void AddMessageToPanel(bool isMe, List<Message1> messages)
         {
+            panel1.Controls.Clear();
+            panel1.AutoScroll = true;
+
+            FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                FlowDirection = FlowDirection.TopDown
+            };
+
             try
             {
-                if (sender == null)
+                foreach (var message in messages)
                 {
-                    throw new ArgumentNullException(nameof(sender), "Sender is null");
+                    Label messageLabel = new Label
+                    {
+                        Text = $"{message.CreatedAt:G}: {message.Content}",
+                        AutoSize = true,
+                        MaximumSize = new Size(panel1.Width - 20, 0),
+                        Padding = new Padding(10),
+                        Margin = new Padding(5),
+                        BackColor = isMe ? Color.LightBlue : Color.LightGray,
+                        TextAlign = ContentAlignment.MiddleLeft
+                    };
+
+                    flowLayoutPanel.Controls.Add(messageLabel);
                 }
 
-                if (content == null)
-                {
-                    throw new ArgumentNullException(nameof(content), "Content is null");
-                }
-
-                Label messageLabel = new Label
-                {
-                    Text = $"{timestamp:G} {sender}: {content}",
-                    AutoSize = true,
-                    MaximumSize = new Size(panel1.Width - 20, 0),
-                    Padding = new Padding(10),
-                    Margin = new Padding(5),
-                    BackColor = sender == "Me" ? Color.LightBlue : Color.LightGray,
-                    TextAlign = ContentAlignment.MiddleLeft
-                };
-
-                // Добавляем сообщение в начало панели
-                panel1.Controls.Add(messageLabel); // Добавляем в конец
-                panel1.Controls.SetChildIndex(messageLabel, 0); // Помещаем в начало
-                //panel1.ScrollControlIntoView(messageLabel); // Прокручиваем к добавленному сообщению
+                panel1.Controls.Add(flowLayoutPanel);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error adding message to panel: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
 
         private async void LoadUserChats()
@@ -122,6 +125,8 @@ namespace mACRON
 
                 // Получаем список чатов из корневого объекта
                 var chatsResponse = chatResponse.Chats;
+
+                _chats = chatsResponse;
 
                 FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel
                 {
@@ -175,16 +180,22 @@ namespace mACRON
         {
             Button chatButton = sender as Button;
 
+            int _chatId = (int)chatButton.Tag;
+
+            // Найдите чат в списке _chats по chatId и установите его как активный
+            _activeChat = _chats.FirstOrDefault(chat => chat.Id == _chatId);
+
             if (chatButton != null && chatButton.Tag != null)
             {
-                string chatId = chatButton.Tag.ToString();
+                int chatId = (int)chatButton.Tag;
+                MessageBox.Show(chatId.ToString());
 
                 try
                 {
                     SetAuthorizationHeader();
 
                     // Получаем сообщения чата по сети
-                    HttpResponseMessage response = await _chatService.GetMessages(6);
+                    HttpResponseMessage response = await _chatService.GetMessages(chatId);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -195,7 +206,7 @@ namespace mACRON
 
                         foreach (var message in messagesResponse.Messages)
                         {
-                            AddMessageToPanel(message.UserId.ToString(), message.Content, message.CreatedAt);
+                            //AddMessageToPanel(message.UserId.ToString(), message.Content, message.CreatedAt);
                         }
                     }
                     else
@@ -212,6 +223,12 @@ namespace mACRON
             {
                 MessageBox.Show("Ошибка: Не удалось определить идентификатор чата.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void UpdateActiveChatUI()
+        {
+            // Пример обновления интерфейса, например, вывод имени активного чата в TextBox
+            //textBoxActiveChatName.Text = _activeChat?.Name ?? "No active chat selected";
         }
 
         private void LoadChatMessages(string chatId)
@@ -331,22 +348,14 @@ namespace mACRON
                 {
                     string json = await response.Content.ReadAsStringAsync();
 
-                    // Сохранение JSON в файл
-                    //SaveJsonToFile(json, "chatMessages.json");
-
                     try
                     {
                         var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
 
-                        panel1.Controls.Clear();
+                        //var message = messagesResponse.Messages;
 
-                        foreach (var message in messagesResponse.Messages)
-                        {
-                            MessageBox.Show(message.Content);
-
-                            //AddMessageToPanel(1.ToString(), message.Content, message.CreatedAt);
-
-                        }
+                        //panel1.Controls.Clear();
+                        AddMessageToPanel(true, messagesResponse.Messages);
                     }
                     catch (Exception deserializationException)
                     {
