@@ -30,7 +30,6 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.button8 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
@@ -67,7 +66,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.button8);
             this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Controls.Add(this.panel2);
             this.tabPage1.Controls.Add(this.button1);
@@ -80,16 +78,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Чаты";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(6, 80);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(332, 72);
-            this.button8.TabIndex = 5;
-            this.button8.Text = "button8";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button2
             // 
@@ -106,9 +94,9 @@
             this.panel2.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.panel2.AutoScroll = true;
             this.panel2.BackColor = System.Drawing.Color.Wheat;
-            this.panel2.Location = new System.Drawing.Point(5, 158);
+            this.panel2.Location = new System.Drawing.Point(5, 80);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(333, 526);
+            this.panel2.Size = new System.Drawing.Size(333, 604);
             this.panel2.TabIndex = 3;
             // 
             // button1
@@ -135,7 +123,6 @@
             // 
             // panel1
             // 
-            this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.Color.MistyRose;
             this.panel1.Location = new System.Drawing.Point(344, 6);
             this.panel1.Name = "panel1";
@@ -287,7 +274,6 @@
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button8;
         private System.Windows.Forms.TextBox textBox5;
     }
 }

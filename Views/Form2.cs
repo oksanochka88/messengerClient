@@ -17,7 +17,7 @@ namespace mACRON
     {
         private Form1 form1;
         private WebSocket ws;
-        private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
+        //private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
         private JWT jwtAutch = new JWT();
         private List<Chat> _chats = new List<Chat>();
         private Chat _activeChat;
@@ -68,7 +68,7 @@ namespace mACRON
             }
         }
 
-        private void AddMessageToPanel(bool isMe, List<Message1> messages)
+        private void AddMessageToPanel(bool isMe, List<Models.Message> messages)
         {
             panel1.Controls.Clear();
             panel1.AutoScroll = true;
@@ -77,15 +77,16 @@ namespace mACRON
             {
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
-                FlowDirection = FlowDirection.TopDown
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false // Убедитесь, что панели не переносятся на следующую строку
             };
 
             try
             {
                 if (messages == null || messages.Count == 0)
                     return;
-                    foreach (var message in messages)
-                    {
+                foreach (var message in messages)
+                {
                     Label messageLabel = new Label
                     {
                         Text = $"{message.CreatedAt:G}: {message.Content}",
@@ -108,8 +109,6 @@ namespace mACRON
             }
         }
 
-
-
         private async void LoadUserChats()
         {
             panel2.Controls.Clear();
@@ -121,7 +120,7 @@ namespace mACRON
 
                 // Получаем список чатов по сети
                 string result = await _chatService.GetChats(); // Предполагается, что метод GetChats возвращает строку JSON
-                MessageBox.Show(result); // Показывает полученный JSON
+                //MessageBox.Show(result); // Показывает полученный JSON
 
                 // Десериализуем JSON в корневой объект ChatResponse
                 var chatResponse = JsonConvert.DeserializeObject<ChatResponse>(result);
@@ -191,7 +190,7 @@ namespace mACRON
             if (chatButton != null && chatButton.Tag != null)
             {
                 int chatId = (int)chatButton.Tag;
-                MessageBox.Show(chatId.ToString());
+                //MessageBox.Show(chatId.ToString());
 
                 try
                 {
@@ -269,7 +268,7 @@ namespace mACRON
                     else
                     {
                         MessageBox.Show("No messages found", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        AddMessageToPanel(false, new List<Message1>()); // Отображаем пустую панель
+                        AddMessageToPanel(false, new List<Models.Message>()); // Отображаем пустую панель
                     }
                 }
                 else
@@ -364,6 +363,7 @@ namespace mACRON
 
         }
 
+        /*
         // Получение сообщений
         private async void button8_Click(object sender, EventArgs e)
         {
@@ -402,6 +402,7 @@ namespace mACRON
                 MessageBox.Show($"Произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        */
 
         private void SaveJsonToFile(string json, string fileName)
         {
@@ -414,19 +415,5 @@ namespace mACRON
                 MessageBox.Show($"Произошла ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-    }
-
-    public class Message1
-    {
-        public int Id { get; set; }
-        public int ChatId { get; set; }
-        public string UserId { get; set; }
-        public string Content { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }
-
-    public class MessagesResponse
-    {
-        public List<Message1> Messages { get; set; }
     }
 }
