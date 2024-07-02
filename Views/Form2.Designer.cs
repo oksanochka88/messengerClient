@@ -30,6 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button8 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
@@ -45,7 +46,7 @@
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button8 = new System.Windows.Forms.Button();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -80,6 +81,16 @@
             this.tabPage1.Text = "Чаты";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(6, 80);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(332, 72);
+            this.button8.TabIndex = 5;
+            this.button8.Text = "button8";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(6, 6);
@@ -95,9 +106,9 @@
             this.panel2.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.panel2.AutoScroll = true;
             this.panel2.BackColor = System.Drawing.Color.Wheat;
-            this.panel2.Location = new System.Drawing.Point(5, 191);
+            this.panel2.Location = new System.Drawing.Point(5, 158);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(333, 493);
+            this.panel2.Size = new System.Drawing.Size(333, 526);
             this.panel2.TabIndex = 3;
             // 
             // button1
@@ -133,6 +144,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.textBox5);
             this.tabPage2.Controls.Add(this.button7);
             this.tabPage2.Controls.Add(this.button6);
             this.tabPage2.Controls.Add(this.button5);
@@ -228,15 +240,13 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // button8
+            // textBox5
             // 
-            this.button8.Location = new System.Drawing.Point(61, 95);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(211, 72);
-            this.button8.TabIndex = 5;
-            this.button8.Text = "button8";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.textBox5.Location = new System.Drawing.Point(591, 401);
+            this.textBox5.Multiline = true;
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(377, 170);
+            this.textBox5.TabIndex = 9;
             // 
             // Form2
             // 
@@ -278,5 +288,6 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.TextBox textBox5;
     }
 }

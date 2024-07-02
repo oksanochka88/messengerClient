@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebSocketSharp;
 
@@ -81,8 +82,10 @@ namespace mACRON
 
             try
             {
-                foreach (var message in messages)
-                {
+                if (messages == null || messages.Count == 0)
+                    return;
+                    foreach (var message in messages)
+                    {
                     Label messageLabel = new Label
                     {
                         Text = $"{message.CreatedAt:G}: {message.Content}",
@@ -202,12 +205,10 @@ namespace mACRON
                         string json = await response.Content.ReadAsStringAsync();
                         var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
 
-                        panel1.Controls.Clear();
+                        //panel1.Controls.Clear();
 
-                        foreach (var message in messagesResponse.Messages)
-                        {
-                            //AddMessageToPanel(message.UserId.ToString(), message.Content, message.CreatedAt);
-                        }
+                        AddMessageToPanel(true, messagesResponse.Messages);
+
                     }
                     else
                     {
@@ -231,16 +232,54 @@ namespace mACRON
             //textBoxActiveChatName.Text = _activeChat?.Name ?? "No active chat selected";
         }
 
+        /*
         private void LoadChatMessages(string chatId)
         {
-            panel1.Controls.Clear();
+            //panel1.Controls.Clear();
 
             if (chatMessages.TryGetValue(chatId, out var messages))
             {
                 foreach (var message in messages)
                 {
-                    //AddMessageToPanel(message.Sender, message.Content, message.Timestamp);
+
                 }
+            }
+        }
+        */
+
+        // Обновить сообщения в активном чате
+        private async Task LoadChatMessages(string chatId)
+        {
+            try
+            {
+                SetAuthorizationHeader();
+
+                HttpResponseMessage response = await _chatService.GetMessages(int.Parse(chatId));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
+
+                    if (messagesResponse != null && messagesResponse.Messages != null)
+                    {
+                        // Добавляем сообщения в панель
+                        AddMessageToPanel(false, messagesResponse.Messages);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No messages found", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        AddMessageToPanel(false, new List<Message1>()); // Отображаем пустую панель
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Ошибка получения сообщений: {response.ReasonPhrase}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при загрузке сообщений чата: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -272,29 +311,19 @@ namespace mACRON
             MessageBox.Show(response.IsSuccessStatusCode ? "Chat created successfully" : "Error creating chat: " + responseBody);
         }
 
-        // Отправить сообщение, ПОЛУЧИТЬ ЧАТЫ
         private async void button1_Click_1(object sender, EventArgs e)
         {
-            /*
-            SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
-
-            try
-            {
-                string result = await _chatService.GetChats();
-                MessageBox.Show(result, "Chats Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error getting chats: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            */
-
-
             try
             {
                 SetAuthorizationHeader();
 
-                int chatId = 6; // Укажите идентификатор чата, куда нужно отправить сообщение
+                if (_activeChat == null)
+                {
+                    MessageBox.Show("No active chat selected", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                int chatId = _activeChat.Id; // Получаем идентификатор активного чата
                 string content = textBox1.Text; // Предположим, у вас есть текстовое поле для ввода сообщения
 
                 HttpResponseMessage response = await _chatService.SendMessage(chatId, content);
@@ -305,7 +334,8 @@ namespace mACRON
                     MessageBox.Show("Message sent successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     textBox1.Clear();
 
-                    LoadChatMessages(chatId.ToString()); // Обновляем сообщения в чате
+                    // Обновляем сообщения в чате
+                    await LoadChatMessages(chatId.ToString());
                 }
                 else
                 {
@@ -399,6 +429,4 @@ namespace mACRON
     {
         public List<Message1> Messages { get; set; }
     }
-
-
 }
