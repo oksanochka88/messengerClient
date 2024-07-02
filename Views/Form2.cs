@@ -7,6 +7,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebSocketSharp;
@@ -17,6 +19,7 @@ namespace mACRON
     {
         private Form1 form1;
         private WebSocket ws;
+        //private User user;
         //private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
         private JWT jwtAutch = new JWT();
         private List<Chat> _chats = new List<Chat>();
@@ -68,6 +71,7 @@ namespace mACRON
             }
         }
 
+        /*
         private void AddMessageToPanel(bool isMe, List<Models.Message> messages)
         {
             panel1.Controls.Clear();
@@ -78,7 +82,7 @@ namespace mACRON
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
                 FlowDirection = FlowDirection.TopDown,
-                WrapContents = false // Убедитесь, что панели не переносятся на следующую строку
+                WrapContents = false
             };
 
             try
@@ -96,6 +100,46 @@ namespace mACRON
                         Margin = new Padding(5),
                         BackColor = isMe ? Color.LightBlue : Color.LightGray,
                         TextAlign = ContentAlignment.MiddleLeft
+                    };
+
+                    flowLayoutPanel.Controls.Add(messageLabel);
+                }
+
+                panel1.Controls.Add(flowLayoutPanel);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error adding message to panel: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        */
+        private void AddMessageToPanel(int currentUserId, List<Models.Message> messages)
+        {
+            panel1.Controls.Clear();
+            panel1.AutoScroll = true;
+
+            FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                FlowDirection = FlowDirection.TopDown
+            };
+
+            try
+            {
+                foreach (var message in messages)
+                {
+                    bool isMe = message.UserId == currentUserId.ToString();
+
+                    Label messageLabel = new Label
+                    {
+                        Text = $"{message.CreatedAt:G}: {message.Content}",
+                        AutoSize = true,
+                        MaximumSize = new Size(panel1.Width - 20, 0),
+                        Padding = new Padding(10),
+                        Margin = new Padding(5),
+                        BackColor = isMe ? Color.LightBlue : Color.LightGray,
+                        TextAlign = isMe ? ContentAlignment.MiddleRight : ContentAlignment.MiddleLeft
                     };
 
                     flowLayoutPanel.Controls.Add(messageLabel);
@@ -134,7 +178,8 @@ namespace mACRON
                 {
                     Dock = DockStyle.Fill,
                     AutoScroll = true,
-                    FlowDirection = FlowDirection.TopDown
+                    FlowDirection = FlowDirection.TopDown,
+                    WrapContents = false
                 };
 
                 foreach (var chat in chatsResponse)
@@ -206,7 +251,7 @@ namespace mACRON
 
                         //panel1.Controls.Clear();
 
-                        AddMessageToPanel(true, messagesResponse.Messages);
+                        AddMessageToPanel(6, messagesResponse.Messages);
 
                     }
                     else
@@ -263,12 +308,12 @@ namespace mACRON
                     if (messagesResponse != null && messagesResponse.Messages != null)
                     {
                         // Добавляем сообщения в панель
-                        AddMessageToPanel(false, messagesResponse.Messages);
+                        AddMessageToPanel(6, messagesResponse.Messages);
                     }
                     else
                     {
                         MessageBox.Show("No messages found", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        AddMessageToPanel(false, new List<Models.Message>()); // Отображаем пустую панель
+                        AddMessageToPanel(6, new List<Models.Message>()); // Отображаем пустую панель
                     }
                 }
                 else
@@ -323,7 +368,7 @@ namespace mACRON
                 }
 
                 int chatId = _activeChat.Id; // Получаем идентификатор активного чата
-                string content = textBox1.Text; // Предположим, у вас есть текстовое поле для ввода сообщения
+                string content = textBox1.Text;
 
                 HttpResponseMessage response = await _chatService.SendMessage(chatId, content);
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -413,6 +458,49 @@ namespace mACRON
             catch (Exception ex)
             {
                 MessageBox.Show($"Произошла ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task<User> GetUserProfileAsync(string jwtToken)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:8080/"); // Замените на ваш адрес
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+                HttpResponseMessage response = await client.GetAsync("/profile");
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    User user = JsonConvert.DeserializeObject<User>(responseBody);
+                    return user;
+                }
+                else
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show("Ошибка при получении профиля: " + error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+        }
+
+        private async void button8_Click(object sender, EventArgs e)
+        {
+            string jwtToken = jwtAutch.GetJwtFromConfig(); // Замените на ваш реальный JWT токен
+
+            User userProfile = await GetUserProfileAsync(jwtToken);
+
+            if (userProfile != null)
+            {
+                string userInfo = $"ID: {userProfile.ID}\n" +
+                                  $"Username: {userProfile.Username}\n" +
+                                  $"Email: {userProfile.Email}\n" +
+                                  $"Password: {userProfile.Password}\n" +
+                                  $"UniqueId: {userProfile.UniqueId}\n" +
+                                  $"About: {userProfile.About}";
+                MessageBox.Show(userInfo, "User Profile", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }

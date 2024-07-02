@@ -36,6 +36,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
@@ -44,11 +45,13 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.button8 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -56,6 +59,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.tabControl1.Location = new System.Drawing.Point(12, 6);
             this.tabControl1.Multiline = true;
@@ -149,6 +153,14 @@
             this.tabPage2.Text = "Профиль";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(591, 401);
+            this.textBox5.Multiline = true;
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(377, 170);
+            this.textBox5.TabIndex = 9;
+            // 
             // button7
             // 
             this.button7.Location = new System.Drawing.Point(1030, 310);
@@ -218,6 +230,16 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.button8);
+            this.tabPage3.Location = new System.Drawing.Point(4, 35);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(1171, 690);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "+ ЧАТ";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(6, 6);
@@ -227,13 +249,15 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // textBox5
+            // button8
             // 
-            this.textBox5.Location = new System.Drawing.Point(591, 401);
-            this.textBox5.Multiline = true;
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(377, 170);
-            this.textBox5.TabIndex = 9;
+            this.button8.Location = new System.Drawing.Point(284, 153);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(275, 111);
+            this.button8.TabIndex = 0;
+            this.button8.Text = "button8";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // Form2
             // 
@@ -250,6 +274,7 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -275,5 +300,7 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button button8;
     }
 }
