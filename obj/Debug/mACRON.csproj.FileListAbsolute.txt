@@ -15,4 +15,3 @@ C:\Users\РОМАН\source\repos\mACRON\obj\Debug\mACRON.csproj.CopyComplete
 C:\Users\РОМАН\source\repos\mACRON\obj\Debug\mACRON.Form2.resources
 C:\Users\РОМАН\source\repos\mACRON\bin\Debug\websocket-sharp.dll
 C:\Users\РОМАН\source\repos\mACRON\bin\Debug\websocket-sharp.xml
-C:\Users\РОМАН\source\repos\mACRON\obj\Debug\mACRON.Views.SearchUserForm.resources

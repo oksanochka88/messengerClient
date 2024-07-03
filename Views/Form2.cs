@@ -12,7 +12,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebSocketSharp;
-//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace mACRON
 {
@@ -41,7 +40,6 @@ namespace mACRON
             _chatService = new ChatService(_httpClient);
 
             LoadUserChats();
-            //User userProfile = await GetUserProfileAsync(jwtToken);
         }
 
         private async void Form2_Load(object sender, EventArgs e)
@@ -235,21 +233,6 @@ namespace mACRON
             }
         }
 
-        /*
-        private void LoadChatMessages(string chatId)
-        {
-            //panel1.Controls.Clear();
-
-            if (chatMessages.TryGetValue(chatId, out var messages))
-            {
-                foreach (var message in messages)
-                {
-
-                }
-            }
-        }
-        */
-
         // Обновить сообщения в активном чате
         private async Task LoadChatMessages(string chatId)
         {
@@ -334,7 +317,7 @@ namespace mACRON
 
                 if (response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show("Message sent successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //MessageBox.Show("Message sent successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     textBox1.Clear();
 
                     // Обновляем сообщения в чате
@@ -360,11 +343,6 @@ namespace mACRON
         private void button3_Click(object sender, EventArgs e)
         {
             this.Close(); // Закрывает текущую форму
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void SaveJsonToFile(string json, string fileName)
@@ -431,18 +409,79 @@ namespace mACRON
             User user = await GetUserByUsernameAsync(username);
             if (user != null)
             {
-                MessageBox.Show($"ID: {user.ID}\nUsername: {user.Username}\nEmail: {user.Email}\nAbout: {user.About}", "Информация о пользователе", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show($"ID: {user.ID}\nUsername: {user.Username}\nEmail: {user.Email}\nAbout: {user.About}", "Информация о пользователе", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Вызываем функцию создания чата
                 string chatName = username;
                 List<string> participants = new List<string> { username }; // Используем найденного пользователя
 
                 await CreateChatAsync(chatName, participants, jwtAutch.GetJwtFromConfig());
+
+                LoadUserChats();
+
+                DisplayUserProfile(panel3,user);
             }
             else
             {
                 MessageBox.Show("Пользователь не найден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void DisplayUserProfile(Panel panel, User user)
+        {
+            panel.Controls.Clear(); // Очистка панели от предыдущих данных
+
+            // Label для ID пользователя
+            Label lblId = new Label
+            {
+                Text = $"ID: {user.ID}",
+                AutoSize = true,
+                Location = new Point(10, 10)
+            };
+            panel.Controls.Add(lblId);
+
+            // TextBox для имени пользователя
+            TextBox txtUsername = new TextBox
+            {
+                Text = user.Username,
+                Location = new Point(10, 40),
+                Width = 200
+            };
+            panel.Controls.Add(txtUsername);
+
+            // TextBox для email пользователя
+            TextBox txtEmail = new TextBox
+            {
+                Text = user.Email,
+                Location = new Point(10, 70),
+                Width = 200
+            };
+            panel.Controls.Add(txtEmail);
+
+            // TextBox для описания пользователя (About)
+            TextBox txtAbout = new TextBox
+            {
+                Text = user.About,
+                Location = new Point(10, 100),
+                Width = 200
+            };
+            panel.Controls.Add(txtAbout);
+
+            // PictureBox для фото пользователя
+            PictureBox pictureBox = new PictureBox
+            {
+                Location = new Point(10, 130),
+                Size = new Size(100, 100),
+                SizeMode = PictureBoxSizeMode.StretchImage
+            };
+            if (user.Photo != null)
+            {
+                using (var ms = new MemoryStream(user.Photo))
+                {
+                    pictureBox.Image = Image.FromStream(ms);
+                }
+            }
+            panel.Controls.Add(pictureBox);
         }
 
         private async Task<User> GetUserByUsernameAsync(string username)
@@ -475,7 +514,6 @@ namespace mACRON
                 return null;
             }
         }
-
      
         private void LoadUserProfile(User user)
         {
@@ -485,21 +523,6 @@ namespace mACRON
             textBox5.Text = user.About;
 
             LoadUserPhoto(_user, pictureBox1);
-        }
-   
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox5_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

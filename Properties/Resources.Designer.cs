@@ -73,6 +73,16 @@ namespace mACRON.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap magnifier_1_icon_icons_com_56924 {
+            get {
+                object obj = ResourceManager.GetObject("magnifier-1_icon-icons.com_56924", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap vp1EUDXj6Cs {
             get {
                 object obj = ResourceManager.GetObject("vp1EUDXj6Cs", resourceCulture);

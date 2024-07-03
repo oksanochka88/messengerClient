@@ -124,4 +124,7 @@
   <data name="jel78jlbuji_1692015241" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\jel78jlbuji_1692015241.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="magnifier-1_icon-icons.com_56924" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\magnifier-1_icon-icons.com_56924.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

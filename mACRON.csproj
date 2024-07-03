@@ -77,12 +77,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Views\SearchUserForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\SearchUserForm.Designer.cs">
-      <DependentUpon>SearchUserForm.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Views\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -99,9 +93,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Views\SearchUserForm.resx">
-      <DependentUpon>SearchUserForm.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -124,6 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\jel78jlbuji_1692015241.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\magnifier-1_icon-icons.com_56924.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
