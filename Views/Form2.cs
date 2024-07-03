@@ -12,6 +12,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebSocketSharp;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace mACRON
 {
@@ -21,7 +22,6 @@ namespace mACRON
         //private WebSocket ws;
 
         private User _user;
-        //private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
 
         private JWT jwtAutch = new JWT();
         private List<Chat> _chats = new List<Chat>();
@@ -47,51 +47,9 @@ namespace mACRON
         private async void Form2_Load(object sender, EventArgs e)
         {
             _user = await GetUserProfileAsync(jwtAutch.GetJwtFromConfig());
-            LoadUserPhoto(_user, pictureBox1);
+            LoadUserProfile(_user);
         }
 
-        /*
-        private void AddMessageToPanel(bool isMe, List<Models.Message> messages)
-        {
-            panel1.Controls.Clear();
-            panel1.AutoScroll = true;
-
-            FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoScroll = true,
-                FlowDirection = FlowDirection.TopDown,
-                WrapContents = false
-            };
-
-            try
-            {
-                if (messages == null || messages.Count == 0)
-                    return;
-                foreach (var message in messages)
-                {
-                    Label messageLabel = new Label
-                    {
-                        Text = $"{message.CreatedAt:G}: {message.Content}",
-                        AutoSize = true,
-                        MaximumSize = new Size(panel1.Width - 20, 0),
-                        Padding = new Padding(10),
-                        Margin = new Padding(5),
-                        BackColor = isMe ? Color.LightBlue : Color.LightGray,
-                        TextAlign = ContentAlignment.MiddleLeft
-                    };
-
-                    flowLayoutPanel.Controls.Add(messageLabel);
-                }
-
-                panel1.Controls.Add(flowLayoutPanel);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error adding message to panel: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        */
         private void AddMessageToPanel(int currentUserId, List<Models.Message> messages)
         {
             panel1.Controls.Clear();
@@ -401,54 +359,13 @@ namespace mACRON
         // Выход
         private void button3_Click(object sender, EventArgs e)
         {
-
+            this.Close(); // Закрывает текущую форму
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }
-
-        /*
-        // Получение сообщений
-        private async void button8_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
-
-                int chatId = 6; // Пример ID чата, замените на нужный ID
-                HttpResponseMessage response = await _chatService.GetMessages(chatId);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-
-                    try
-                    {
-                        var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
-
-                        //var message = messagesResponse.Messages;
-
-                        //panel1.Controls.Clear();
-                        AddMessageToPanel(true, messagesResponse.Messages);
-                    }
-                    catch (Exception deserializationException)
-                    {
-                        MessageBox.Show($"Ошибка десериализации: {deserializationException.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show($"Ошибка получения сообщений: {response.ReasonPhrase}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        */
 
         private void SaveJsonToFile(string json, string fileName)
         {
@@ -557,6 +474,32 @@ namespace mACRON
                 MessageBox.Show("Произошла ошибка при запросе: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
+        }
+
+     
+        private void LoadUserProfile(User user)
+        {
+            // Устанавливаем значения для TextBox
+            textBox2.Text = user.Username;
+            textBox3.Text = user.Email;
+            textBox5.Text = user.About;
+
+            LoadUserPhoto(_user, pictureBox1);
+        }
+   
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
