@@ -12,14 +12,15 @@ namespace mACRON.Controllers
     {
         private ConfigController configController = new ConfigController();
 
-        public async Task<string> RegisterUserAsync(string username, string email, string password, string about)
+        public async Task<string> RegisterUserAsync(string username, string email, string password, string about, byte[] photo)
         {
             var user = new
             {
                 Username = username,
                 Email = email,
                 Password = password,
-                About = about
+                About = about,
+                Photo = photo
             };
 
             var json = JsonConvert.SerializeObject(user);

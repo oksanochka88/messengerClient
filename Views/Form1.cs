@@ -1,6 +1,7 @@
 ﻿using mACRON.Controllers;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace mACRON
@@ -26,14 +27,31 @@ namespace mACRON
             string password = textBox3.Text;
             string about = textBox5.Text;
 
+            // Считываем фото из PictureBox
+            byte[] photo = null;
+            if (pictureBox1.Image != null)
+            {
+                photo = ImageToByteArray(pictureBox1.Image);
+            }
+
+
             try
             {
-                string responseBody = await registerUser.RegisterUserAsync(username, email, password, about);
+                string responseBody = await registerUser.RegisterUserAsync(username, email, password, about, photo);
                 MessageBox.Show("Registration successful: " + responseBody);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private byte[] ImageToByteArray(Image image)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                return ms.ToArray();
             }
         }
 

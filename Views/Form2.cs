@@ -18,7 +18,7 @@ namespace mACRON
     public partial class Form2 : Form
     {
         private Form1 form1;
-        private WebSocket ws;
+        //private WebSocket ws;
 
         private User _user;
         //private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
@@ -47,32 +47,7 @@ namespace mACRON
         private async void Form2_Load(object sender, EventArgs e)
         {
             _user = await GetUserProfileAsync(jwtAutch.GetJwtFromConfig());
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(textBox1.Text))
-            {
-                try
-                {
-                    // Отправляем сообщение через WebSocket
-                    ws.Send(textBox1.Text);
-
-                    // Отображаем отправленное сообщение на панели
-                    //AddMessageToPanel("Me", textBox1.Text, DateTime.Now);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ошибка при отправке сообщения: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-
-                // Очищаем текстовое поле после отправки сообщения
-                textBox1.Clear();
-            }
-            else
-            {
-                MessageBox.Show("Введите сообщение перед отправкой", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            LoadUserPhoto(_user, pictureBox1);
         }
 
         /*
@@ -175,7 +150,6 @@ namespace mACRON
                 MessageBox.Show($"Error adding message to panel: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private async void LoadUserChats()
         {
@@ -303,12 +277,6 @@ namespace mACRON
             }
         }
 
-        private void UpdateActiveChatUI()
-        {
-            // Пример обновления интерфейса, например, вывод имени активного чата в TextBox
-            //textBoxActiveChatName.Text = _activeChat?.Name ?? "No active chat selected";
-        }
-
         /*
         private void LoadChatMessages(string chatId)
         {
@@ -369,23 +337,6 @@ namespace mACRON
         {
             string token = jwtAutch.GetJwtFromConfig();
             _chatService.SetAuthorizationHeader(token);
-        }
-
-        // Поиск чататов
-        private async void button2_Click(object sender, EventArgs e)
-        {
-            SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
-
-            string chatName = "roma";
-            List<string> participants = new List<string>
-            {
-                "pizda7897"
-            };
-
-            HttpResponseMessage response = await _chatService.CreateChat(chatName, participants);
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            MessageBox.Show(response.IsSuccessStatusCode ? "Chat created successfully" : "Error creating chat: " + responseBody);
         }
 
         private async Task CreateChatAsync(string chatName, List<string> participants, string jwtToken)
@@ -536,6 +487,21 @@ namespace mACRON
             }
         }
 
+        private void LoadUserPhoto(User user, PictureBox pictureBox)
+        {
+            if (user.Photo != null && user.Photo.Length > 0)
+            {
+                using (var ms = new MemoryStream(user.Photo))
+                {
+                    pictureBox.Image = Image.FromStream(ms);
+                }
+            }
+            else
+            {
+                pictureBox.Image = null; // Или установить изображение по умолчанию
+            }
+        }
+
         private async void button8_Click(object sender, EventArgs e)
         {
             string username = textBox6.Text;
@@ -591,12 +557,6 @@ namespace mACRON
                 MessageBox.Show("Произошла ошибка при запросе: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
-        }
-
-
-        private void textBox6_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
