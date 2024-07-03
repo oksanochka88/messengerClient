@@ -1,6 +1,7 @@
 ﻿using mACRON.Controllers;
 using mACRON.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,10 +41,12 @@ namespace mACRON
             _chatService = new ChatService(_httpClient);
 
             LoadUserChats();
+            //User userProfile = await GetUserProfileAsync(jwtToken);
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+        private async void Form2_Load(object sender, EventArgs e)
         {
+            _user = await GetUserProfileAsync(jwtAutch.GetJwtFromConfig());
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -129,22 +132,40 @@ namespace mACRON
 
             try
             {
-                foreach (var message in messages)
+                if (messages == null || messages.Count == 0)
                 {
-                    bool isMe = message.UserId == currentUserId.ToString();
-
-                    Label messageLabel = new Label
+                    Label noMessagesLabel = new Label
                     {
-                        Text = $"{message.CreatedAt:G}: {message.Content}",
+                        Text = "No messages to display.",
                         AutoSize = true,
                         MaximumSize = new Size(panel1.Width - 20, 0),
                         Padding = new Padding(10),
                         Margin = new Padding(5),
-                        BackColor = isMe ? Color.LightBlue : Color.LightGray,
-                        TextAlign = isMe ? ContentAlignment.MiddleRight : ContentAlignment.MiddleLeft
+                        BackColor = Color.LightGray,
+                        TextAlign = ContentAlignment.MiddleCenter
                     };
 
-                    flowLayoutPanel.Controls.Add(messageLabel);
+                    flowLayoutPanel.Controls.Add(noMessagesLabel);
+                }
+                else
+                {
+                    foreach (var message in messages)
+                    {
+                        bool isMe = message.UserId == currentUserId.ToString();
+
+                        Label messageLabel = new Label
+                        {
+                            Text = $"{message.CreatedAt:G}: {message.Content}",
+                            AutoSize = true,
+                            MaximumSize = new Size(panel1.Width - 20, 0),
+                            Padding = new Padding(10),
+                            Margin = new Padding(5),
+                            BackColor = isMe ? Color.LightBlue : Color.LightGray,
+                            TextAlign = isMe ? ContentAlignment.MiddleRight : ContentAlignment.MiddleLeft
+                        };
+
+                        flowLayoutPanel.Controls.Add(messageLabel);
+                    }
                 }
 
                 panel1.Controls.Add(flowLayoutPanel);
@@ -154,6 +175,7 @@ namespace mACRON
                 MessageBox.Show($"Error adding message to panel: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private async void LoadUserChats()
         {
@@ -175,6 +197,11 @@ namespace mACRON
                 var chatsResponse = chatResponse.Chats;
 
                 _chats = chatsResponse;
+
+                if (chatsResponse == null || !chatsResponse.Any())
+                {
+                    return;
+                }
 
                 FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel
                 {
@@ -361,6 +388,23 @@ namespace mACRON
             MessageBox.Show(response.IsSuccessStatusCode ? "Chat created successfully" : "Error creating chat: " + responseBody);
         }
 
+        private async Task CreateChatAsync(string chatName, List<string> participants, string jwtToken)
+        {
+            try
+            {
+                SetAuthorizationHeader(); // Устанавливаем заголовок авторизации
+
+                HttpResponseMessage response = await _chatService.CreateChat(chatName, participants);
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                MessageBox.Show(response.IsSuccessStatusCode ? "Chat created successfully" : "Error creating chat: " + responseBody, "Chat Creation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while creating the chat: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private async void button1_Click_1(object sender, EventArgs e)
         {
             try
@@ -494,22 +538,65 @@ namespace mACRON
 
         private async void button8_Click(object sender, EventArgs e)
         {
-            string jwtToken = jwtAutch.GetJwtFromConfig(); // Замените на ваш реальный JWT токен
-
-            User userProfile = await GetUserProfileAsync(jwtToken);
-
-            _user = userProfile;
-
-            if (userProfile != null)
+            string username = textBox6.Text;
+            if (string.IsNullOrEmpty(username))
             {
-                string userInfo = $"ID: {userProfile.ID}\n" +
-                                  $"Username: {userProfile.Username}\n" +
-                                  $"Email: {userProfile.Email}\n" +
-                                  $"Password: {userProfile.Password}\n" +
-                                  $"UniqueId: {userProfile.UniqueId}\n" +
-                                  $"About: {userProfile.About}";
-                MessageBox.Show(userInfo, "User Profile", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Введите имя пользователя", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            User user = await GetUserByUsernameAsync(username);
+            if (user != null)
+            {
+                MessageBox.Show($"ID: {user.ID}\nUsername: {user.Username}\nEmail: {user.Email}\nAbout: {user.About}", "Информация о пользователе", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Вызываем функцию создания чата
+                string chatName = username;
+                List<string> participants = new List<string> { username }; // Используем найденного пользователя
+
+                await CreateChatAsync(chatName, participants, jwtAutch.GetJwtFromConfig());
+            }
+            else
+            {
+                MessageBox.Show("Пользователь не найден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task<User> GetUserByUsernameAsync(string username)
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("http://localhost:8080/"); // Замените на ваш адрес
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtAutch.GetJwtFromConfig()); // Добавляем JWT токен
+
+                HttpResponseMessage response = await client.GetAsync($"check/{username}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    User user = JsonConvert.DeserializeObject<User>(responseBody);
+                    return user;
+                }
+                else
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show("Ошибка при получении профиля: " + error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Произошла ошибка при запросе: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+
+        private void textBox6_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

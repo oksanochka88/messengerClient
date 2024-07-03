@@ -48,6 +48,8 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button8 = new System.Windows.Forms.Button();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -232,12 +234,14 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label1);
+            this.tabPage3.Controls.Add(this.textBox6);
             this.tabPage3.Controls.Add(this.button8);
             this.tabPage3.Location = new System.Drawing.Point(4, 35);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(1171, 690);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "+ ЧАТ";
+            this.tabPage3.Text = "Управление чатами";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // pictureBox1
@@ -251,13 +255,30 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(439, 226);
+            this.button8.Location = new System.Drawing.Point(583, 123);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(275, 111);
+            this.button8.Size = new System.Drawing.Size(247, 65);
             this.button8.TabIndex = 0;
-            this.button8.Text = "button8";
+            this.button8.Text = "Начать общение";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(439, 61);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(522, 32);
+            this.textBox6.TabIndex = 1;
+            this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(47, 67);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(294, 26);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Введите ник пользователя:";
             // 
             // Form2
             // 
@@ -275,6 +296,7 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -302,5 +324,7 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBox6;
     }
 }
