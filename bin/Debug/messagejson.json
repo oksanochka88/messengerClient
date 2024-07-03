@@ -1,0 +1,66 @@
+{
+  "messages": [
+    {
+      "id": 1,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "eerefwefwe",
+      "created_at": "2024-07-01T07:13:43.50699Z"
+    },
+    {
+      "id": 2,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "ТЫ хуйло!",
+      "created_at": "2024-07-01T07:14:05.052659Z"
+    },
+    {
+      "id": 3,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "Жопа и говно!",
+      "created_at": "2024-07-02T05:52:53.872525Z"
+    },
+    {
+      "id": 4,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "Popka",
+      "created_at": "2024-07-02T12:34:37.711021Z"
+    },
+    {
+      "id": 6,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "Жопка",
+      "created_at": "2024-07-02T17:15:56.000589Z"
+    },
+    {
+      "id": 8,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "ewfwefwe",
+      "created_at": "2024-07-02T17:55:17.467673Z"
+    },
+    {
+      "id": 9,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "fwefwefw",
+      "created_at": "2024-07-02T17:55:19.77387Z"
+    },
+    {
+      "id": 10,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "f32323",
+      "created_at": "2024-07-02T17:55:22.889122Z"
+    },
+    {
+      "id": 11,
+      "chat_id": 6,
+      "user_id": "4",
+      "content": "edaascasdcadvsdf3e23e23ee32e23e23e23e3e3e3e3e3e3e3e3",
+      "created_at": "2024-07-02T17:55:30.058102Z"
+    }
+  ]}

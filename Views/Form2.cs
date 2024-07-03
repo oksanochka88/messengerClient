@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebSocketSharp;
@@ -19,8 +18,10 @@ namespace mACRON
     {
         private Form1 form1;
         private WebSocket ws;
-        //private User user;
+
+        private User _user;
         //private Dictionary<string, List<mACRON.Models.Message>> chatMessages;
+
         private JWT jwtAutch = new JWT();
         private List<Chat> _chats = new List<Chat>();
         private Chat _activeChat;
@@ -122,7 +123,8 @@ namespace mACRON
             {
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
-                FlowDirection = FlowDirection.TopDown
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false
             };
 
             try
@@ -249,9 +251,13 @@ namespace mACRON
                         string json = await response.Content.ReadAsStringAsync();
                         var messagesResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
 
+                        //SaveJsonToFile(json, "messagejson.json");
+
+                        //MessageBox.Show(messagesResponse.Messages.ToString());
+
                         //panel1.Controls.Clear();
 
-                        AddMessageToPanel(6, messagesResponse.Messages);
+                        AddMessageToPanel(int.Parse(_user.ID), messagesResponse.Messages);
 
                     }
                     else
@@ -308,12 +314,12 @@ namespace mACRON
                     if (messagesResponse != null && messagesResponse.Messages != null)
                     {
                         // Добавляем сообщения в панель
-                        AddMessageToPanel(6, messagesResponse.Messages);
+                        AddMessageToPanel(int.Parse(_user.ID), messagesResponse.Messages);
                     }
                     else
                     {
                         MessageBox.Show("No messages found", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        AddMessageToPanel(6, new List<Models.Message>()); // Отображаем пустую панель
+                        AddMessageToPanel(int.Parse(_user.ID), new List<Models.Message>()); // Отображаем пустую панель
                     }
                 }
                 else
@@ -491,6 +497,8 @@ namespace mACRON
             string jwtToken = jwtAutch.GetJwtFromConfig(); // Замените на ваш реальный JWT токен
 
             User userProfile = await GetUserProfileAsync(jwtToken);
+
+            _user = userProfile;
 
             if (userProfile != null)
             {
