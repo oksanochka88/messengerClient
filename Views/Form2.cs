@@ -1,7 +1,6 @@
 ﻿using mACRON.Controllers;
 using mACRON.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,25 +8,29 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WebSocketSharp;
 
 namespace mACRON
 {
     public partial class Form2 : Form
     {
         private Form1 form1;
-        //private WebSocket ws;
-
         private User _user;
 
-        private JWT jwtAutch = new JWT();
+        private ConfigController configController = new ConfigController();
+        private JWT _jwtAutch = new JWT();
         private List<Chat> _chats = new List<Chat>();
         private Chat _activeChat;
 
         private readonly ChatService _chatService;
         private readonly HttpClient _httpClient;
+
+        private ClientWebSocket ws;
+        private CancellationTokenSource cancellationTokenSource;
 
         public Form2(Form1 form1)
         {
@@ -44,8 +47,11 @@ namespace mACRON
 
         private async void Form2_Load(object sender, EventArgs e)
         {
-            _user = await GetUserProfileAsync(jwtAutch.GetJwtFromConfig());
+            _user = await GetUserProfileAsync(_jwtAutch.GetJwtFromConfig());
             LoadUserProfile(_user);
+
+            cancellationTokenSource = new CancellationTokenSource();
+            ListenForWebSocketMessages(_jwtAutch.GetJwtFromConfig());
         }
 
         private void AddMessageToPanel(int currentUserId, List<Models.Message> messages)
@@ -271,12 +277,18 @@ namespace mACRON
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
+            cancellationTokenSource.Cancel();
+            if (ws != null)
+            {
+                ws.Dispose();
+            }
+
             form1.Close();
         }
 
         private void SetAuthorizationHeader()
         {
-            string token = jwtAutch.GetJwtFromConfig();
+            string token = _jwtAutch.GetJwtFromConfig();
             _chatService.SetAuthorizationHeader(token);
         }
 
@@ -361,7 +373,7 @@ namespace mACRON
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:8080/"); // Замените на ваш адрес
+                client.BaseAddress = new Uri(configController.GetServerUrl()+"/"); // Замените на ваш адрес
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
@@ -397,6 +409,7 @@ namespace mACRON
             }
         }
 
+        // Начать ообщение
         private async void button8_Click(object sender, EventArgs e)
         {
             string username = textBox6.Text;
@@ -415,11 +428,11 @@ namespace mACRON
                 string chatName = username;
                 List<string> participants = new List<string> { username }; // Используем найденного пользователя
 
-                await CreateChatAsync(chatName, participants, jwtAutch.GetJwtFromConfig());
+                await CreateChatAsync(chatName, participants, _jwtAutch.GetJwtFromConfig());
 
                 LoadUserChats();
 
-                DisplayUserProfile(panel3,user);
+                DisplayUserProfile(panel3, user);
             }
             else
             {
@@ -431,46 +444,85 @@ namespace mACRON
         {
             panel.Controls.Clear(); // Очистка панели от предыдущих данных
 
-            // Label для ID пользователя
-            Label lblId = new Label
-            {
-                Text = $"ID: {user.ID}",
-                AutoSize = true,
-                Location = new Point(10, 10)
-            };
-            panel.Controls.Add(lblId);
+            int padding = 10;
+            int labelWidth = 100;
+            int controlHeight = 25;
+            int yPosition = 10;
+            int controlWidth = panel.Width - padding * 2 - labelWidth; // Максимальная ширина для текстовых полей
 
-            // TextBox для имени пользователя
+            yPosition += controlHeight + padding;
+
+            // Label для имени пользователя
+            Label lblUsername = new Label
+            {
+                Text = "Username:",
+                AutoSize = true,
+                Location = new Point(padding, yPosition)
+            };
+            panel.Controls.Add(lblUsername);
+
             TextBox txtUsername = new TextBox
             {
                 Text = user.Username,
-                Location = new Point(10, 40),
-                Width = 200
+                Location = new Point(padding + labelWidth, yPosition),
+                Width = controlWidth
             };
             panel.Controls.Add(txtUsername);
 
-            // TextBox для email пользователя
+            yPosition += controlHeight + padding;
+
+            // Label для email пользователя
+            Label lblEmail = new Label
+            {
+                Text = "Email:",
+                AutoSize = true,
+                Location = new Point(padding, yPosition)
+            };
+            panel.Controls.Add(lblEmail);
+
             TextBox txtEmail = new TextBox
             {
                 Text = user.Email,
-                Location = new Point(10, 70),
-                Width = 200
+                Location = new Point(padding + labelWidth, yPosition),
+                Width = controlWidth
             };
             panel.Controls.Add(txtEmail);
 
-            // TextBox для описания пользователя (About)
+            yPosition += controlHeight + padding;
+
+            // Label для описания пользователя (About)
+            Label lblAbout = new Label
+            {
+                Text = "About:",
+                AutoSize = true,
+                Location = new Point(padding, yPosition)
+            };
+            panel.Controls.Add(lblAbout);
+
             TextBox txtAbout = new TextBox
             {
                 Text = user.About,
-                Location = new Point(10, 100),
-                Width = 200
+                Location = new Point(padding + labelWidth, yPosition),
+                Width = controlWidth,
+                Height = 50,
+                Multiline = true
             };
             panel.Controls.Add(txtAbout);
 
-            // PictureBox для фото пользователя
+            yPosition += 50 + padding;
+
+            // Label для фото пользователя
+            Label lblPhoto = new Label
+            {
+                Text = "Photo:",
+                AutoSize = true,
+                Location = new Point(padding, yPosition)
+            };
+            panel.Controls.Add(lblPhoto);
+
             PictureBox pictureBox = new PictureBox
             {
-                Location = new Point(10, 130),
+                Location = new Point(padding + labelWidth, yPosition),
                 Size = new Size(100, 100),
                 SizeMode = PictureBoxSizeMode.StretchImage
             };
@@ -489,10 +541,10 @@ namespace mACRON
             try
             {
                 var client = new HttpClient();
-                client.BaseAddress = new Uri("http://localhost:8080/"); // Замените на ваш адрес
+                client.BaseAddress = new Uri(configController.GetServerUrl()+"/"); // Замените на ваш адрес
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtAutch.GetJwtFromConfig()); // Добавляем JWT токен
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _jwtAutch.GetJwtFromConfig()); // Добавляем JWT токен
 
                 HttpResponseMessage response = await client.GetAsync($"check/{username}");
                 if (response.IsSuccessStatusCode)
@@ -514,7 +566,7 @@ namespace mACRON
                 return null;
             }
         }
-     
+
         private void LoadUserProfile(User user)
         {
             // Устанавливаем значения для TextBox
@@ -523,6 +575,76 @@ namespace mACRON
             textBox5.Text = user.About;
 
             LoadUserPhoto(_user, pictureBox1);
+        }
+
+        // Удалить профиль
+        private void button7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void ListenForWebSocketMessages(string jwtToken)
+        {
+            var serverUrl = configController.GetServerUrl();
+            var wsUrl = serverUrl.Replace("http", "ws") + "/ws";
+
+            while (!cancellationTokenSource.Token.IsCancellationRequested)
+            {
+                try
+                {
+                    using (ws = new ClientWebSocket())
+                    {
+                        ws.Options.SetRequestHeader("Authorization", "Bearer " + jwtToken);
+                        await ws.ConnectAsync(new Uri(wsUrl), cancellationTokenSource.Token);
+
+                        var buffer = new byte[1024 * 4];
+                        while (ws.State == WebSocketState.Open)
+                        {
+                            var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationTokenSource.Token);
+                            var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
+                            if (message == "new_message")
+                            {
+                                int chatId = _activeChat.Id; // Получаем идентификатор активного чата
+                                // Получить обновленный список сообщений через REST API и обновить интерфейс
+                                await LoadChatMessages(chatId.ToString());
+                            }
+                        }
+                    }
+                }
+                catch (WebSocketException ex)
+                {
+                    // Обработка ошибки соединения и попытка переподключения
+                    MessageBox.Show($"WebSocket connection error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await Task.Delay(5000); // Задержка перед попыткой переподключения
+                }
+                catch (OperationCanceledException)
+                {
+                    // Обработка отмены операции (например, закрытие приложения)
+                    break;
+                }
+            }
+        }
+
+        // Поиск человека по нику, дублирование
+        private async void button5_Click(object sender, EventArgs e)
+        {
+            string username = textBox6.Text;
+            if (string.IsNullOrEmpty(username))
+            {
+                MessageBox.Show("Введите имя пользователя", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            User user = await GetUserByUsernameAsync(username);
+            if (user != null)
+            {
+                DisplayUserProfile(panel3, user);
+            }
+            else
+            {
+                MessageBox.Show("Пользователь не найден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

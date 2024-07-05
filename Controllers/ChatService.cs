@@ -11,6 +11,7 @@ namespace mACRON.Controllers
 {
     public class ChatService
     {
+        private ConfigController configController = new ConfigController();
         private readonly HttpClient _httpClient;
 
         public ChatService(HttpClient httpClient)
@@ -34,12 +35,12 @@ namespace mACRON.Controllers
             var json = JsonConvert.SerializeObject(chatData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            return await _httpClient.PostAsync("http://localhost:8080/chats", content);
+            return await _httpClient.PostAsync(configController.GetServerUrl() + "/chats", content);
         }
 
         public async Task<string> GetChats()
         {
-            HttpResponseMessage response = await _httpClient.GetAsync("http://localhost:8080/chats");
+            HttpResponseMessage response = await _httpClient.GetAsync(configController.GetServerUrl() + "/chats");
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -53,12 +54,14 @@ namespace mACRON.Controllers
             var json = JsonConvert.SerializeObject(messageData);
             var contentData = new StringContent(json, Encoding.UTF8, "application/json");
 
-            return await _httpClient.PostAsync($"http://localhost:8080/chats/{chatId}/messages", contentData);
+            var serverUrl = configController.GetServerUrl();
+            return await _httpClient.PostAsync($"{serverUrl}/chats/{chatId}/messages", contentData);
         }
 
         public async Task<HttpResponseMessage> GetMessages(int chatId)
         {
-            return await _httpClient.GetAsync($"http://localhost:8080/chats/{chatId}/messages");
+            var serverUrl = configController.GetServerUrl();
+            return await _httpClient.GetAsync($"{serverUrl}/chats/{chatId}/messages");
         }
     }
 }
