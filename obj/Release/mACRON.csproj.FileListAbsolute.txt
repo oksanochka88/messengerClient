@@ -1,0 +1,17 @@
+C:\Users\РОМАН\source\repos\mACRON\bin\Release\mACRON.exe.config
+C:\Users\РОМАН\source\repos\mACRON\bin\Release\mACRON.exe
+C:\Users\РОМАН\source\repos\mACRON\bin\Release\mACRON.pdb
+C:\Users\РОМАН\source\repos\mACRON\bin\Release\Newtonsoft.Json.dll
+C:\Users\РОМАН\source\repos\mACRON\bin\Release\websocket-sharp.dll
+C:\Users\РОМАН\source\repos\mACRON\bin\Release\Newtonsoft.Json.xml
+C:\Users\РОМАН\source\repos\mACRON\bin\Release\websocket-sharp.xml
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.csproj.AssemblyReference.cache
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.csproj.SuggestedBindingRedirects.cache
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.Form1.resources
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.Form2.resources
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.Properties.Resources.resources
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.csproj.GenerateResource.cache
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.csproj.CoreCompileInputs.cache
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.csproj.CopyComplete
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.exe
+C:\Users\РОМАН\source\repos\mACRON\obj\Release\mACRON.pdb

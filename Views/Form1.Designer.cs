@@ -33,6 +33,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -50,6 +51,7 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.buttonLogin = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
@@ -57,13 +59,11 @@
             this.label11 = new System.Windows.Forms.Label();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.textBox7 = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.Регистрация.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -82,6 +82,7 @@
             // 
             // Регистрация
             // 
+            this.Регистрация.BackColor = System.Drawing.Color.White;
             this.Регистрация.Controls.Add(this.label6);
             this.Регистрация.Controls.Add(this.textBox5);
             this.Регистрация.Controls.Add(this.button2);
@@ -100,7 +101,6 @@
             this.Регистрация.Size = new System.Drawing.Size(1136, 679);
             this.Регистрация.TabIndex = 0;
             this.Регистрация.Text = "Регистрация";
-            this.Регистрация.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -132,6 +132,16 @@
             this.button2.Text = "Загрузить аватарку";
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click_2);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::mACRON.Properties.Resources.vp1EUDXj6Cs;
+            this.pictureBox1.Location = new System.Drawing.Point(870, 89);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(190, 156);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 38;
+            this.pictureBox1.TabStop = false;
             // 
             // label4
             // 
@@ -310,14 +320,25 @@
             this.tabPage1.Text = "Настройки";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = global::mACRON.Properties.Resources.jel78jlbuji_1692015241;
+            this.pictureBox2.Location = new System.Drawing.Point(3, 71);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(1130, 323);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox2.TabIndex = 7;
+            this.pictureBox2.TabStop = false;
+            // 
             // button5
             // 
+            this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.button5.Location = new System.Drawing.Point(948, 607);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(185, 69);
             this.button5.TabIndex = 6;
             this.button5.Text = "Проверить доступность";
-            this.button5.UseVisualStyleBackColor = true;
+            this.button5.UseVisualStyleBackColor = false;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button4
@@ -378,26 +399,6 @@
             this.textBox7.Size = new System.Drawing.Size(254, 38);
             this.textBox7.TabIndex = 0;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::mACRON.Properties.Resources.vp1EUDXj6Cs;
-            this.pictureBox1.Location = new System.Drawing.Point(870, 89);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(190, 156);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 38;
-            this.pictureBox1.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = global::mACRON.Properties.Resources.jel78jlbuji_1692015241;
-            this.pictureBox2.Location = new System.Drawing.Point(3, 71);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(1130, 323);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 7;
-            this.pictureBox2.TabStop = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -409,11 +410,11 @@
             this.tabControl1.ResumeLayout(false);
             this.Регистрация.ResumeLayout(false);
             this.Регистрация.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
 

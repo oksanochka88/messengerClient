@@ -18,10 +18,10 @@ namespace mACRON
 {
     public partial class Form2 : Form
     {
-        private Form1 form1;
+        private Form1 _form1;
         private User _user;
 
-        private ConfigController configController = new ConfigController();
+        private ConfigController _configController = new ConfigController();
         private JWT _jwtAutch = new JWT();
         private List<Chat> _chats = new List<Chat>();
         private Chat _activeChat;
@@ -29,28 +29,28 @@ namespace mACRON
         private readonly ChatService _chatService;
         private readonly HttpClient _httpClient;
 
-        private ClientWebSocket ws;
-        private CancellationTokenSource cancellationTokenSource;
+        private ClientWebSocket _ws;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public Form2(Form1 form1)
         {
             InitializeComponent();
 
             this.FormClosing += Form2_FormClosing;
-            this.form1 = form1;
+            this._form1 = form1;
 
             _httpClient = new HttpClient();
             _chatService = new ChatService(_httpClient);
-
-            LoadUserChats();
         }
 
         private async void Form2_Load(object sender, EventArgs e)
         {
             _user = await GetUserProfileAsync(_jwtAutch.GetJwtFromConfig());
+            
             LoadUserProfile(_user);
+            LoadUserChats(panel2);
 
-            cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = new CancellationTokenSource();
             ListenForWebSocketMessages(_jwtAutch.GetJwtFromConfig());
         }
 
@@ -113,10 +113,10 @@ namespace mACRON
             }
         }
 
-        private async void LoadUserChats()
+        private async void LoadUserChats(Panel displayPanel)
         {
-            panel2.Controls.Clear();
-            panel2.AutoScroll = true;
+            displayPanel.Controls.Clear();
+            displayPanel.AutoScroll = true;
 
             try
             {
@@ -124,7 +124,6 @@ namespace mACRON
 
                 // Получаем список чатов по сети
                 string result = await _chatService.GetChats(); // Предполагается, что метод GetChats возвращает строку JSON
-                //MessageBox.Show(result); // Показывает полученный JSON
 
                 // Десериализуем JSON в корневой объект ChatResponse
                 var chatResponse = JsonConvert.DeserializeObject<ChatResponse>(result);
@@ -149,10 +148,20 @@ namespace mACRON
 
                 foreach (var chat in chatsResponse)
                 {
+                    string[] nsmes = chat.Name.Split(new char[] { ' ' });
+                    if (nsmes[0] == _user.Username)
+                    {
+                        chat.Name = nsmes[1];
+                    }
+                    else
+                    {
+                        chat.Name = nsmes[0];
+                    }
+
                     Panel chatPanel = new Panel
                     {
                         Height = 40,
-                        Width = panel2.Width - 20,
+                        Width = displayPanel.Width - 20,
                         Margin = new Padding(5),
                         BorderStyle = BorderStyle.FixedSingle,
                         Padding = new Padding(5)
@@ -180,7 +189,7 @@ namespace mACRON
                     flowLayoutPanel.Controls.Add(chatPanel);
                 }
 
-                panel2.Controls.Add(flowLayoutPanel);
+                displayPanel.Controls.Add(flowLayoutPanel);
             }
             catch (Exception ex)
             {
@@ -277,13 +286,13 @@ namespace mACRON
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
-            cancellationTokenSource.Cancel();
-            if (ws != null)
+            _cancellationTokenSource.Cancel();
+            if (_ws != null)
             {
-                ws.Dispose();
+                _ws.Dispose();
             }
 
-            form1.Close();
+            _form1.Close();
         }
 
         private void SetAuthorizationHeader()
@@ -357,23 +366,11 @@ namespace mACRON
             this.Close(); // Закрывает текущую форму
         }
 
-        private void SaveJsonToFile(string json, string fileName)
-        {
-            try
-            {
-                File.WriteAllText(fileName, json);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private async Task<User> GetUserProfileAsync(string jwtToken)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(configController.GetServerUrl()+"/"); // Замените на ваш адрес
+                client.BaseAddress = new Uri(_configController.GetServerUrl() + "/"); // Замените на ваш адрес
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
@@ -422,15 +419,13 @@ namespace mACRON
             User user = await GetUserByUsernameAsync(username);
             if (user != null)
             {
-                //MessageBox.Show($"ID: {user.ID}\nUsername: {user.Username}\nEmail: {user.Email}\nAbout: {user.About}", "Информация о пользователе", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 // Вызываем функцию создания чата
-                string chatName = username;
+                string chatName = username + " " +_user.Username;
                 List<string> participants = new List<string> { username }; // Используем найденного пользователя
 
                 await CreateChatAsync(chatName, participants, _jwtAutch.GetJwtFromConfig());
 
-                LoadUserChats();
+                LoadUserChats(panel2);
 
                 DisplayUserProfile(panel3, user);
             }
@@ -541,7 +536,7 @@ namespace mACRON
             try
             {
                 var client = new HttpClient();
-                client.BaseAddress = new Uri(configController.GetServerUrl()+"/"); // Замените на ваш адрес
+                client.BaseAddress = new Uri(_configController.GetServerUrl() + "/"); // Замените на ваш адрес
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _jwtAutch.GetJwtFromConfig()); // Добавляем JWT токен
@@ -585,22 +580,22 @@ namespace mACRON
 
         private async void ListenForWebSocketMessages(string jwtToken)
         {
-            var serverUrl = configController.GetServerUrl();
+            var serverUrl = _configController.GetServerUrl();
             var wsUrl = serverUrl.Replace("http", "ws") + "/ws";
 
-            while (!cancellationTokenSource.Token.IsCancellationRequested)
+            while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 try
                 {
-                    using (ws = new ClientWebSocket())
+                    using (_ws = new ClientWebSocket())
                     {
-                        ws.Options.SetRequestHeader("Authorization", "Bearer " + jwtToken);
-                        await ws.ConnectAsync(new Uri(wsUrl), cancellationTokenSource.Token);
+                        _ws.Options.SetRequestHeader("Authorization", "Bearer " + jwtToken);
+                        await _ws.ConnectAsync(new Uri(wsUrl), _cancellationTokenSource.Token);
 
                         var buffer = new byte[1024 * 4];
-                        while (ws.State == WebSocketState.Open)
+                        while (_ws.State == WebSocketState.Open)
                         {
-                            var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationTokenSource.Token);
+                            var result = await _ws.ReceiveAsync(new ArraySegment<byte>(buffer), _cancellationTokenSource.Token);
                             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
 
                             if (message == "new_message")
@@ -645,6 +640,39 @@ namespace mACRON
             {
                 MessageBox.Show("Пользователь не найден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // Удалить чат
+        private void button9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Изменить фото
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel4_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Обновить профиль
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
