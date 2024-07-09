@@ -521,13 +521,8 @@ namespace mACRON
                 Size = new Size(100, 100),
                 SizeMode = PictureBoxSizeMode.StretchImage
             };
-            if (user.Photo != null)
-            {
-                using (var ms = new MemoryStream(user.Photo))
-                {
-                    pictureBox.Image = Image.FromStream(ms);
-                }
-            }
+            LoadUserPhoto(user, pictureBox);
+
             panel.Controls.Add(pictureBox);
         }
 
