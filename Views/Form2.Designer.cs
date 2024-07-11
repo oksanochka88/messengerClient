@@ -145,7 +145,7 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Профиль";
             this.tabPage2.UseVisualStyleBackColor = true;
-            this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+            //this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
             // 
             // button7
             // 
@@ -272,7 +272,7 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(790, 524);
             this.panel3.TabIndex = 4;
-            this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
+            //this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
             // button5
             // 

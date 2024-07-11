@@ -46,7 +46,7 @@ namespace mACRON
         private async void Form2_Load(object sender, EventArgs e)
         {
             _user = await GetUserProfileAsync(_jwtAutch.GetJwtFromConfig());
-            
+
             LoadUserProfile(_user);
             LoadUserChats(panel2);
 
@@ -420,7 +420,7 @@ namespace mACRON
             if (user != null)
             {
                 // Вызываем функцию создания чата
-                string chatName = username + " " +_user.Username;
+                string chatName = username + " " + _user.Username;
                 List<string> participants = new List<string> { username }; // Используем найденного пользователя
 
                 await CreateChatAsync(chatName, participants, _jwtAutch.GetJwtFromConfig());
@@ -654,18 +654,9 @@ namespace mACRON
 
         }
 
-        private void tabPage2_Click(object sender, EventArgs e)
-        {
-
-        }
 
         // Обновить профиль
         private void button3_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel3_Paint(object sender, PaintEventArgs e)
         {
 
         }
