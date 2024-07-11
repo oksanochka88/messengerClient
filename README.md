@@ -1,9 +1,9 @@
-# Проект
+# РџСЂРѕРµРєС‚
 
-## Фото
+## Р¤РѕС‚Рѕ
 
 <details>
-  <summary>Нажмите, чтобы увидеть фото</summary>
+  <summary>РќР°Р¶РјРёС‚Рµ, С‡С‚РѕР±С‹ СѓРІРёРґРµС‚СЊ С„РѕС‚Рѕ</summary>
   
   <img src="./media/Screenshot_1.png" alt="Screenshot 1">
   <img src="./media/Screenshot_2.png" alt="Screenshot 2">
