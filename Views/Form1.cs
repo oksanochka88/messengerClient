@@ -1,4 +1,5 @@
 ﻿using mACRON.Controllers;
+using mACRON.Helpers;
 using System;
 using System.Drawing;
 using System.IO;
@@ -32,6 +33,34 @@ namespace mACRON
             if (pictureBox1.Image != null)
             {
                 photo = ImageToByteArray(pictureBox1.Image);
+            }
+
+            // Валидация данных
+            if (!ValidationHelper.ValidateUsername(username))
+            {
+                MessageBox.Show("Invalid username. Username must be between 3 and 32 characters.",
+                                "Registration Error", // Заголовок окна
+                                MessageBoxButtons.OK, // Кнопка ОК
+                                MessageBoxIcon.Warning); // Иконка предупреждения
+                return;
+            }
+
+            if (!ValidationHelper.ValidateEmail(email))
+            {
+                MessageBox.Show("Invalid email address.",
+                                "Registration Error", // Заголовок окна
+                                MessageBoxButtons.OK, // Кнопка ОК
+                                MessageBoxIcon.Warning); // Иконка предупреждения
+                return;
+            }
+
+            if (!ValidationHelper.ValidatePassword(password))
+            {
+                MessageBox.Show("Invalid password. Password must be at least 6 characters long.",
+                                "Registration Error", // Заголовок окна
+                                MessageBoxButtons.OK, // Кнопка ОК
+                                MessageBoxIcon.Warning); // Иконка предупреждения
+                return;
             }
 
 
